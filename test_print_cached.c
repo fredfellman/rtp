@@ -106,7 +106,7 @@ static void check_terminate(Config *c) {
     if (n_all_for_now <= 0 && n_resolving <= 0) {
 
         if (c->verbose && !c->parsable) {
-            printf(_(": All for now\n"));
+            printf((": All for now\n"));
             n_all_for_now++; /* Make sure that this event is not repeated */
         }
 
@@ -117,7 +117,7 @@ static void check_terminate(Config *c) {
     if (n_cache_exhausted <= 0 && n_resolving <= 0) {
 
         if (c->verbose && !c->parsable) {
-            printf(_(": Cache exhausted\n"));
+            printf((": Cache exhausted\n"));
             n_cache_exhausted++; /* Make sure that this event is not repeated */
         }
 
@@ -167,8 +167,8 @@ static void print_service_line(Config *config, char c, AvahiIfIndex interface, A
 
         printf("%c;%s;%s;%s;%s;%s%s",
                c,
-               interface != AVAHI_IF_UNSPEC ? if_indextoname(interface, ifname) : _("n/a"),
-               protocol != AVAHI_PROTO_UNSPEC ? avahi_proto_to_string(protocol) : _("n/a"),
+               interface != AVAHI_IF_UNSPEC ? if_indextoname(interface, ifname) : ("n/a"),
+               protocol != AVAHI_PROTO_UNSPEC ? avahi_proto_to_string(protocol) : ("n/a"),
                avahi_escape_label(name, strlen(name), &e, &l), type, domain, nl ? "\n" : "");
 
     } else {
@@ -177,8 +177,8 @@ static void print_service_line(Config *config, char c, AvahiIfIndex interface, A
 
         printf("%c %6s %4s %-*s %-20s %s\n",
                c,
-               interface != AVAHI_IF_UNSPEC ? if_indextoname(interface, ifname) : _("n/a"),
-               protocol != AVAHI_PROTO_UNSPEC ? avahi_proto_to_string(protocol) : _("n/a"),
+               interface != AVAHI_IF_UNSPEC ? if_indextoname(interface, ifname) : ("n/a"),
+               protocol != AVAHI_PROTO_UNSPEC ? avahi_proto_to_string(protocol) : ("n/a"),
                n_columns-35, label, type, domain);
     }
 
@@ -238,7 +238,7 @@ static void service_resolver_callback(
 
         case AVAHI_RESOLVER_FAILURE:
 
-            fprintf(stderr, _("Failed to resolve service '%s' of type '%s' in domain '%s': %s\n"), name, type, domain, avahi_strerror(avahi_client_errno(client)));
+            fprintf(stderr, ("Failed to resolve service '%s' of type '%s' in domain '%s': %s\n"), name, type, domain, avahi_strerror(avahi_client_errno(client)));
             break;
     }
 
@@ -260,7 +260,7 @@ static ServiceInfo *add_service(Config *c, AvahiIfIndex interface, AvahiProtocol
     if (c->resolve) {
         if (!(i->resolver = avahi_service_resolver_new(client, interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC, 0, service_resolver_callback, i))) {
             avahi_free(i);
-            fprintf(stderr, _("Failed to resolve service '%s' of type '%s' in domain '%s': %s\n"), name, type, domain, avahi_strerror(avahi_client_errno(client)));
+            fprintf(stderr, ("Failed to resolve service '%s' of type '%s' in domain '%s': %s\n"), name, type, domain, avahi_strerror(avahi_client_errno(client)));
             return NULL;
         }
 
@@ -339,7 +339,7 @@ static void service_browser_callback(
         }
 
         case AVAHI_BROWSER_FAILURE:
-            fprintf(stderr, _("service_browser failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
+            fprintf(stderr, ("service_browser failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
             avahi_simple_poll_quit(simple_poll);
             break;
 
@@ -377,7 +377,7 @@ static void browse_service_type(Config *c, const char *stype, const char *domain
             service_browser_callback,
             c))) {
 
-        fprintf(stderr, _("avahi_service_browser_new() failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
+        fprintf(stderr, ("avahi_service_browser_new() failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
         avahi_simple_poll_quit(simple_poll);
     }
 
@@ -413,7 +413,7 @@ static void service_type_browser_callback(
             break;
 
         case AVAHI_BROWSER_FAILURE:
-            fprintf(stderr, _("service_type_browser failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
+            fprintf(stderr, ("service_type_browser failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
             avahi_simple_poll_quit(simple_poll);
             break;
 
@@ -443,7 +443,7 @@ static void browse_all(Config *c) {
             service_type_browser_callback,
             c))) {
 
-        fprintf(stderr, _("avahi_service_type_browser_new() failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
+        fprintf(stderr, ("avahi_service_type_browser_new() failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
         avahi_simple_poll_quit(simple_poll);
     }
 
@@ -518,7 +518,7 @@ static void browse_domains(Config *c) {
             domain_browser_callback,
             c))) {
 
-        fprintf(stderr, _("avahi_domain_browser_new() failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
+        fprintf(stderr, ("avahi_domain_browser_new() failed: %s\n"), avahi_strerror(avahi_client_errno(client)));
         avahi_simple_poll_quit(simple_poll);
     }
 
@@ -534,25 +534,25 @@ static int start(Config *config) {
         const char *version, *hn;
 
         if (!(version = avahi_client_get_version_string(client))) {
-            fprintf(stderr, _("Failed to query version string: %s\n"), avahi_strerror(avahi_client_errno(client)));
+            fprintf(stderr, ("Failed to query version string: %s\n"), avahi_strerror(avahi_client_errno(client)));
             return -1;
         }
 
         if (!(hn = avahi_client_get_host_name_fqdn(client))) {
-            fprintf(stderr, _("Failed to query host name: %s\n"), avahi_strerror(avahi_client_errno(client)));
+            fprintf(stderr, ("Failed to query host name: %s\n"), avahi_strerror(avahi_client_errno(client)));
             return -1;
         }
 
-        fprintf(stderr, _("Server version: %s; Host name: %s\n"), version, hn);
+        fprintf(stderr, ("Server version: %s; Host name: %s\n"), version, hn);
 
         if (config->command == COMMAND_BROWSE_DOMAINS) {
             /* Translators: This is a column heading with abbreviations for
              *   Event (+/-), Network Interface, Protocol (IPv4/v6), Domain */
-            fprintf(stderr, _("E Ifce Prot Domain\n"));
+            fprintf(stderr, ("E Ifce Prot Domain\n"));
         } else {
             /* Translators: This is a column heading with abbreviations for
              *   Event (+/-), Network Interface, Protocol (IPv4/v6), Domain */
-            fprintf(stderr, _("E Ifce Prot %-*s %-20s Domain\n"), n_columns-35, _("Name"), _("Type"));
+            fprintf(stderr, ("E Ifce Prot %-*s %-20s Domain\n"), n_columns-35, ("Name"), ("Type"));
         }
     }
 
@@ -584,7 +584,7 @@ static void client_callback(AvahiClient *c, AvahiClientState state, AVAHI_GCC_UN
 
                 /* We have been disconnected, so let reconnect */
 
-                fprintf(stderr, _("Disconnected, reconnecting ...\n"));
+                fprintf(stderr, ("Disconnected, reconnecting ...\n"));
 
                 avahi_client_free(client);
                 client = NULL;
@@ -598,12 +598,12 @@ static void client_callback(AvahiClient *c, AvahiClientState state, AVAHI_GCC_UN
                 browsing = 0;
 
                 if (!(client = avahi_client_new(avahi_simple_poll_get(simple_poll), AVAHI_CLIENT_NO_FAIL, client_callback, config, &error))) {
-                    fprintf(stderr, _("Failed to create client object: %s\n"), avahi_strerror(error));
+                    fprintf(stderr, ("Failed to create client object: %s\n"), avahi_strerror(error));
                     avahi_simple_poll_quit(simple_poll);
                 }
 
             } else {
-                fprintf(stderr, _("Client failure, exiting: %s\n"), avahi_strerror(avahi_client_errno(c)));
+                fprintf(stderr, ("Client failure, exiting: %s\n"), avahi_strerror(avahi_client_errno(c)));
                 avahi_simple_poll_quit(simple_poll);
             }
 
@@ -622,7 +622,7 @@ static void client_callback(AvahiClient *c, AvahiClientState state, AVAHI_GCC_UN
         case AVAHI_CLIENT_CONNECTING:
 
             if (config->verbose && !config->parsable)
-                fprintf(stderr, _("Waiting for daemon ...\n"));
+                fprintf(stderr, ("Waiting for daemon ...\n"));
 
             break;
     }
@@ -646,7 +646,7 @@ static void help(FILE *f, const char *argv0) {
                 argv0, argv0, argv0);
 
     fprintf(f, "%s%s",
-            _("    -h --help            Show this help\n"
+            ("    -h --help            Show this help\n"
                       "    -V --version         Show version\n"
                       "    -D --browse-domains  Browse for browsing domains instead of services\n"
                       "    -a --all             Show all services, regardless of the type\n"
@@ -659,7 +659,7 @@ static void help(FILE *f, const char *argv0) {
                       "    -f --no-fail         Don't fail if the daemon is not available\n"
                       "    -p --parsable        Output in parsable format\n"),
 #if defined(HAVE_GDBM) || defined(HAVE_DBM)
-            _("    -k --no-db-lookup    Don't lookup service types\n"
+            ("    -k --no-db-lookup    Don't lookup service types\n"
               "    -b --dump-db         Dump service type database\n")
 #else
             ""
@@ -765,7 +765,7 @@ static int parse_command_line(Config *c, const char *argv0, int argc, char *argv
 
     if (c->command == COMMAND_BROWSE_SERVICES) {
         if (optind >= argc) {
-            fprintf(stderr, _("Too few arguments\n"));
+            fprintf(stderr, ("Too few arguments\n"));
             return -1;
         }
 
@@ -774,7 +774,7 @@ static int parse_command_line(Config *c, const char *argv0, int argc, char *argv
     }
 
     if (optind < argc) {
-        fprintf(stderr, _("Too many arguments\n"));
+        fprintf(stderr, ("Too many arguments\n"));
         return -1;
     }
 
@@ -832,7 +832,7 @@ int main(int argc, char *argv[]) {
         case COMMAND_BROWSE_DOMAINS:
 
             if (!(simple_poll = avahi_simple_poll_new())) {
-                fprintf(stderr, _("Failed to create simple poll object.\n"));
+                fprintf(stderr, ("Failed to create simple poll object.\n"));
                 goto fail;
             }
 
@@ -840,7 +840,7 @@ int main(int argc, char *argv[]) {
                 goto fail;*/
 
             if (!(client = avahi_client_new(avahi_simple_poll_get(simple_poll), config.no_fail ? AVAHI_CLIENT_NO_FAIL : 0, client_callback, &config, &error))) {
-                fprintf(stderr, _("Failed to create client object: %s\n"), avahi_strerror(error));
+                fprintf(stderr, ("Failed to create client object: %s\n"), avahi_strerror(error));
                 goto fail;
             }
 
